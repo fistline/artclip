@@ -23,26 +23,22 @@ service: cloud-backend
 provider:
   name: aws
   runtime: nodejs12.x
-
+  region: ap-northeast-2
+  profile: artclip-devmin
+  deploymentBucket:
+    name: artclip-serverless
+    tags: 
+      key1: artclip
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
 
 # you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
+iamRoleStatements:
+  - Effect: "Allow"
+    Action:
+      - "s3:*"
+    Resource: "arn:aws:s3:::artclip-input/*"
 
 # you can define service wide environment variables here
 #  environment:
@@ -56,10 +52,37 @@ provider:
 #  exclude:
 #    - exclude-me.js
 #    - exclude-me-dir/**
+custom:
+  environment: dev
+  prune:
+    automatic: true
+    number: 3
+  base: v1
+  allow-headers: 
+    - Content-Type
+    - X-Amz-Date
+    - Authorization
+    - X-Api-Key
+    - X-Amz-Security-Token
+    - X-Amz-User-Agent
+    - S-Id
 
+    
 functions:
   hello:
     handler: handler.hello
+
+  upload:
+    runtime: nodejs12.x
+    handler: src/node/upload.video_content
+    events:
+      - http:
+          path: ${self:custom.base}/video/upload/
+          method: post
+          cors:
+            origin: '*'
+            headers: ${self:custom.allow-headers}
+            allowCredentials: false
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
@@ -111,3 +134,4 @@ functions:
 #     NewOutput:
 #       Description: "Description for the output"
 #       Value: "Some output value"
+

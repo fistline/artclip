@@ -17,6 +17,7 @@
   "devDependencies": {
     "@truffle/hdwallet-provider": "^1.2.2",
     "solium": "^1.2.5",
+    "chai": "^4.2.0",
     "truffle-keystore-provider": "^1.0.6"
   }
 }

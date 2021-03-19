@@ -1,7 +1,7 @@
 'use strict';
 const AWS = require('aws-sdk');
 
-module.exports.s3upload = async (event, context) => {
+module.exports.video_content = async (event, context) => {
   const s3 = new AWS.S3();
   const params = JSON.parse(event.body);
 
