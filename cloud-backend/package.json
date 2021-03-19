@@ -1,0 +1,14 @@
+{
+  "name": "cloud-backend",
+  "version": "1.0.0",
+  "description": "cloud-backend for artclip",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "junghan, kim",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.867.0"
+  }
+}
