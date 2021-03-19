@@ -1,0 +1,22 @@
+{
+  "name": "artclip",
+  "version": "1.0.0",
+  "description": "artclip, solidity",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@openzeppelin/contracts": "2.5.1"
+  },
+  "devDependencies": {
+    "@truffle/hdwallet-provider": "^1.2.2",
+    "solium": "^1.2.5",
+    "truffle-keystore-provider": "^1.0.6"
+  }
+}
