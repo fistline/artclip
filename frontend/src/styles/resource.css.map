@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AACA,AAAA,SAAS,CAAA;EACL,OAAO,EAAE,gCAAkC;CAC9C",
+    "sources": [
+        "resource.scss"
+    ],
+    "names": [],
+    "file": "resource.css"
+}

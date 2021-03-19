@@ -1,0 +1,100 @@
+<div class="fixed fixed--bottom cookie-disclaimer js-cookie-disclaimer" style="z-index: 10;">
+
+    <div class="cookie cookie--center">
+        <div class="cookie-object cookie-object--right">
+            <button id="cookie_btn" class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-1 px-5 border border-gray-400 rounded shadow m-3">AGREE</button>
+        </div>     
+        <div class="cookie-body">
+            <p>This website use cookies for analytics, advertising and to improve user experience. You agree to our use of cookies by closing this message box or continuing to use our site <a href="#" target="_blank" class="font-bold underline"></a>Cookie Policy.</a></p>
+        </div>
+
+    </div>
+
+</div>
+
+<style>.fixed {
+  position: fixed;
+  will-change: transform;
+}
+
+.fixed--bottom {
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+
+.cookie-disclaimer {
+  background-color:rgba(114, 99, 245, 0.8);
+  color: #fff;
+  font-size: inherit;
+  font-size: 0.875rem;
+  opacity: 0;
+  padding: 12px;
+  padding: 0.75rem;
+  -webkit-transform: translateY(100%);
+          transform: translateY(100%);
+  -webkit-transition: opacity 0.3s, -webkit-transform 0.5s;
+  transition: opacity 0.3s, -webkit-transform 0.5s;
+  transition: opacity 0.3s, transform 0.5s;
+  transition: opacity 0.3s, transform 0.5s, -webkit-transform 0.5s;
+}
+
+.cookie-disclaimer.is-active {
+  opacity: 1;
+  -webkit-transform: translateY(0);
+          transform: translateY(0);
+}
+
+.cookie-disclaimer :first-child {
+  margin-top: 0;
+}
+
+.cookie-disclaimer :last-child {
+  margin-bottom: 0;
+}
+
+/* modules/media.css */
+
+.cookie {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.cookie-center {
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.cookie-object--left {
+  margin-right: 1em;
+}
+
+.cookie-object--right {
+  margin-left: 1em;
+  -webkit-box-ordinal-group: 2;
+      -ms-flex-order: 1;
+          order: 1;
+}
+
+.cookie-body {
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+}
+</style>
+
+<script>
+    var _cookie = document.querySelector('.js-cookie-disclaimer');
+
+    if (!localStorage.getItem('cookieDisclaimer')) {
+        _cookie.classList.add('is-active');
+    }
+    _cookie.querySelector('#cookie_btn').addEventListener('click', function() {
+        localStorage.setItem('cookieDisclaimer', true);
+        _cookie.classList.remove('is-active');
+    });
+
+</script>
