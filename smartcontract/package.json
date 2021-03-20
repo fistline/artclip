@@ -7,7 +7,10 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "audit:flat": "solium -f ./flat/Artclip.sol",
+    "audit": "solium -f ./contracts/Artclip.sol",
+    "flat": "truffle-flattener ./contracts/Artclip.sol > ./flat/Artclip.sol"
+    
   },
   "author": "junghan, kim",
   "license": "ISC",

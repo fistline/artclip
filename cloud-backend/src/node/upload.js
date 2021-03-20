@@ -1,9 +1,13 @@
 'use strict';
 const AWS = require('aws-sdk');
+AWS.config.update({ region: "ap-northeast-2" });
 
 module.exports.video_content = async (event, context) => {
-  AWS.config.update({ region: "ap-northeast-2" });
-  const s3 = new AWS.S3();
+  
+  const s3 = new AWS.S3({
+    region: "ap-northeast-2",
+    signatureVersion: "v4"
+  });
 
   console.log('event.body::',event.body)
   const params = JSON.parse(event.body);
@@ -12,8 +16,9 @@ module.exports.video_content = async (event, context) => {
   const s3Params = {
     Bucket: 'artclip-input',
     Key: params.name,
+    Expires: 60 * 30,
     ContentType: params.type,
-    ACL: 'public-read-write'
+    ACL: 'public-read'
   }
 
   const uploadURL = s3.getSignedUrl('putObject', s3Params)

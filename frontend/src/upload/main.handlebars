@@ -36,11 +36,11 @@
         width: 100%;
         margin: 0;
         color: #fff;
-        background: #1FB264;
+        background: #5c5c5c;
         border: none;
         padding: 10px;
         border-radius: 4px;
-        border-bottom: 4px solid #15824B;
+        border-bottom: 4px solid #8b8b8b;
         transition: all .2s ease;
         outline: none;
         text-transform: uppercase;
@@ -48,8 +48,8 @@
     }
 
     .file-upload-btn:hover {
-        background: #1AA059;
-        color: #ffffff;
+        background: #c4c4c4;
+        color: #000000;
         transition: all .2s ease;
         cursor: pointer;
     }
@@ -77,13 +77,13 @@
 
     .image-upload-wrap {
         margin-top: 20px;
-        border: 4px dashed #1FB264;
+        border: 4px dashed #c4c4c4;
         position: relative;
     }
 
     .image-dropping,
     .image-upload-wrap:hover {
-        background-color: #1FB264;
+        background-color: #c4c4c4;
         border: 4px dashed #ffffff;
     }
 
@@ -99,7 +99,7 @@
     .drag-text h3 {
         font-weight: 100;
         text-transform: uppercase;
-        color: #15824B;
+        color: #757575;
         padding: 60px 0;
     }
 
@@ -161,16 +161,16 @@
             console.log('1111')
             
             
-            //axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
-            //axios.defaults.headers.post['Access-Control-Allow-Methods'] = 'GET,PUT,POST,DELETE,PATCH,OPTIONS';
+            axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+            axios.defaults.headers.post['Access-Control-Allow-Methods'] = 'HEAD,GET,PUT,POST,DELETE';
             //axios.defaults.headers.post['Access-Control-Allow-Credentials'] = true;
             //axios.defaults.headers.post['Access-Control-Expose-Headers'] = 'Access-Control-Allow-Origin';
             //axios.defaults.headers.post['Content-Type'] ='application/json;charset=utf-8';
 
-            console.log(JSON.stringify({
-                "name": input.files[0].name,
-                "type": input.files[0].type
-            }))
+            //console.log(JSON.stringify({
+            //    "name": input.files[0].name,
+            //    "type": input.files[0].type
+            //}))
 
             axios.post('https://sazao66tpl.execute-api.ap-northeast-2.amazonaws.com/dev/v1/video/upload', JSON.stringify({
                 "name": input.files[0].name,
@@ -183,8 +183,8 @@
                     var options = {
                             headers: {
                             'Access-Control-Allow-Origin':'*',
-                            'Access-Control-Allow-Methods':'PUT,POST,DELETE'
-                            
+                            'Access-Control-Allow-Methods':'HEAD,GET,PUT,POST,DELETE',
+                            'x-amz-acl':'public-read'
                             }
                     };
 

@@ -63,8 +63,10 @@ resources:
           WriteCapacityUnits: 1
 
 # you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+  # environment:
+  #   ACCESS_KEY_ID: AKIAR4FQZFQJKNY4MFUU
+  #   SECRET_ACCESS_KEY: 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
+  #   BUCKET_REGION: ap-northeast-2
 
 # you can add packaging information here
 #package:
