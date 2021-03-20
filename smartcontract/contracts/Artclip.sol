@@ -65,7 +65,7 @@ contract Artclip is ERC721{
 
     function mintClip(string memory contentid, uint256 seq, address account) public onlyManagers {
         uint256 clipId = clips.length; // clip index
-        cards.push(Clip(contentid, seq));
+        clips.push(Clip(contentid, seq));
         _mint(account, clipId); // 새 카드를 발행
     }
 

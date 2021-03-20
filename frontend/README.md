@@ -16,3 +16,15 @@ https://docs.aws.amazon.com/AmazonS3/latest/userguide/ShareObjectPreSignedURL.ht
 
 https://codepen.io/mongodb-docs/pen/PaBvMN
 
+
+
+# excution
+
+npm install
+
+npm run start
+
+npm run build
+
+//authorized
+npm run deploy

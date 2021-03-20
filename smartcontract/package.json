@@ -9,7 +9,10 @@
   "scripts": {
     "audit:flat": "solium -f ./flat/Artclip.sol",
     "audit": "solium -f ./contracts/Artclip.sol",
-    "flat": "truffle-flattener ./contracts/Artclip.sol > ./flat/Artclip.sol"
+    "flat": "truffle-flattener ./contracts/Artclip.sol > ./flat/Artclip.sol",
+    "compile":"truffle compile",
+    "deploy":"truffle migrate --reset",
+    "deploy:ropsten":"truffle migrate --reset --network ropsten"
     
   },
   "author": "junghan, kim",
