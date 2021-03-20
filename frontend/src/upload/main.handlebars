@@ -167,6 +167,11 @@
             //axios.defaults.headers.post['Access-Control-Expose-Headers'] = 'Access-Control-Allow-Origin';
             //axios.defaults.headers.post['Content-Type'] ='application/json;charset=utf-8';
 
+            console.log(JSON.stringify({
+                "name": input.files[0].name,
+                "type": input.files[0].type
+            }))
+
             axios.post('https://sazao66tpl.execute-api.ap-northeast-2.amazonaws.com/dev/v1/video/upload', JSON.stringify({
                 "name": input.files[0].name,
                 "type": input.files[0].type
@@ -178,8 +183,8 @@
                     var options = {
                             headers: {
                             'Access-Control-Allow-Origin':'*',
-                            'Access-Control-Allow-Methods':'PUT,POST,DELETE',
-                            'Content-Type': 'application/x-www-form-urlencoded'
+                            'Access-Control-Allow-Methods':'PUT,POST,DELETE'
+                            
                             }
                     };
 
@@ -189,6 +194,7 @@
                         alert(uploaded.status)
                     })
                     .catch(function (error) {
+                        console.log('error >>>>>>>>>>>>>')
                         console.log(error);
                     });
 
