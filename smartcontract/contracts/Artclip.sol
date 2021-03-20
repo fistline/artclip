@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.6.0 <0.8.0;
+pragma solidity  ^0.5.0;
 
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 
@@ -58,7 +59,7 @@ contract Artclip is ERC721{
         return origin;
     }
 
-    function setOrigin(string _origin) public {
+    function setOrigin(string memory _origin) public {
         require(owner == msg.sender, "[Validation] owner only access"); // owner only
         origin = _origin;
     }
@@ -78,7 +79,6 @@ contract Artclip is ERC721{
         require(owner == msg.sender, "[Validation] owner only access");
         ERC20 erc20 = ERC20(_tokenAddr);
         erc20.transfer(_to, _value);
-        emit WithdrowErc20Token(_tokenAddr, _to, _value);
     }
 
     event ManagerChanged(address indexed manager, bool state);
