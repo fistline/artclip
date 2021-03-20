@@ -11,7 +11,7 @@ const Handlebars = require('handlebars');
 module.exports = {
     entry: {
         bundle: './src/app.js',
-        register:'./src/register.js',
+        register:'./src/producer.js',
         upload:'./src/upload.js'
     },
     output: {
@@ -127,10 +127,10 @@ module.exports = {
             },    
         }),
         new HtmlWebpackPlugin({
-            title: 'Artclip register',
-            filename:'register.html',
-            template: './src/register.handlebars',
-            chunks:['register'],
+            title: 'Artclip producer',
+            filename:'producer.html',
+            template: './src/producer.handlebars',
+            chunks:['producer'],
             minify: !isDevelopment && {
                 html5: true,
                 collapseWhitespace: true,

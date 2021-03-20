@@ -6,7 +6,8 @@
   "scripts": {
     "start": "webpack-dev-server --config ./config/webpack.config.js",
     "build": "webpack --config ./config/webpack.config.js && cp -rf ./src/assets ./dist",
-    "deploy":"aws s3 cp ./dist s3://artclip-frontendv1.0 --recursive --acl public-read --profile artclip-devmin"
+    "deploy": "aws s3 cp ./dist s3://artclip-frontendv1.0 --recursive --acl public-read --profile artclip-devmin",
+    "clean": "aws cloudfront create-invalidation --profile artclip-devmin  --distribution-id E1SPEU4OKVTGVM  --paths '/*'"
   },
   "devDependencies": {
     "autoprefixer": "^9.5.1",
@@ -23,8 +24,8 @@
     "node-sass": "^4.12.0",
     "postcss-loader": "^3.0.0",
     "sass-loader": "^7.1.0",
+    "truffle-contract": "^4.0.31",
     "typescript": "^3.9.6",
-    "web3": "^1.3.4",
     "webpack": "^4.30.0",
     "webpack-cli": "^3.3.1",
     "webpack-dev-server": "^3.3.1"
@@ -33,7 +34,8 @@
     "axios": "^0.21.1",
     "jquery": "^3.4.0",
     "scrollmagic": "^2.0.7",
-    "tailwindcss": "^1.4.6"
+    "tailwindcss": "^1.4.6",
+    "web3": "^1.3.4"
   },
   "author": "junghan, kim",
   "license": "ISC"
