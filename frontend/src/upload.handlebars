@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <meta property="og:title" content="artclip - register" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://www.artclip.co/register.html" />	
+    <meta property="og:image" content="assets/img/artclip.png" />
+    <meta property="og:description"  content="artclip - upload" />
+
+
+    <title>Artclip</title>
+    <!--[if lt IE 9]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+         <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            $(function () {
+                $.when($("#loader").fadeOut(800, function () {
+                    $("#main_content").fadeIn(800);
+                })).then(function(){
+                    document.querySelector('#loader').style.display ='none'
+                });
+            });
+        });
+    </script>
+    <div id="loader" style="display:block" >
+        {{> main/loading}}
+    </div>
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.4.1.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<body class="leading-normal tracking-normal text-white gradient" style="font-family: 'Source Sans Pro', sans-serif;">
+   
+    <div id="main_content" class="wrapper" style="display: none;">
+        <div class="content text-black" >
+            
+            {{> main/01Nav}}
+            {{> upload/video}}
+            {{> upload/main}}
+            {{> main/03footer}}
+            {{> main/cookie-check}}
+
+        </div>
+    </div> 
+    
+    <link href="https://unpkg.com/tailwindcss/dist/tailwind.min.css" rel="stylesheet">
+</body>
+</html>

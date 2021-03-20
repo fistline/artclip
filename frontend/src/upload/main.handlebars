@@ -1,0 +1,293 @@
+<div class="file-upload">
+    <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Add
+        Video</button>
+
+    <div class="image-upload-wrap">
+        <input class="file-upload-input" type='file' onchange="readURL(this);" accept="video/*" />
+        <div class="drag-text">
+            <h3>Drag and drop a file or select add Video</h3>
+        </div>
+    </div>
+    <div class="file-upload-content">
+        <img class="file-upload-image" src="#" alt="your video" />
+        <canvas id="canvas-element"></canvas>
+
+        <div class="image-title-wrap">
+            <button type="button" onclick="removeUpload()" class="remove-video">Remove <span
+                    class="image-title">Uploaded Video</span></button>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        font-family: sans-serif;
+        background-color: #eeeeee;
+    }
+
+    .file-upload {
+        background-color: #ffffff;
+        width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .file-upload-btn {
+        width: 100%;
+        margin: 0;
+        color: #fff;
+        background: #1FB264;
+        border: none;
+        padding: 10px;
+        border-radius: 4px;
+        border-bottom: 4px solid #15824B;
+        transition: all .2s ease;
+        outline: none;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .file-upload-btn:hover {
+        background: #1AA059;
+        color: #ffffff;
+        transition: all .2s ease;
+        cursor: pointer;
+    }
+
+    .file-upload-btn:active {
+        border: 0;
+        transition: all .2s ease;
+    }
+
+    .file-upload-content {
+        display: none;
+        text-align: center;
+    }
+
+    .file-upload-input {
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        outline: none;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .image-upload-wrap {
+        margin-top: 20px;
+        border: 4px dashed #1FB264;
+        position: relative;
+    }
+
+    .image-dropping,
+    .image-upload-wrap:hover {
+        background-color: #1FB264;
+        border: 4px dashed #ffffff;
+    }
+
+    .image-title-wrap {
+        padding: 0 15px 15px 15px;
+        color: #222;
+    }
+
+    .drag-text {
+        text-align: center;
+    }
+
+    .drag-text h3 {
+        font-weight: 100;
+        text-transform: uppercase;
+        color: #15824B;
+        padding: 60px 0;
+    }
+
+    .file-upload-image {
+        max-height: 200px;
+        max-width: 200px;
+        margin: auto;
+        padding: 20px;
+    }
+
+    .remove-image {
+        width: 200px;
+        margin: 0;
+        color: #fff;
+        background: #cd4535;
+        border: none;
+        padding: 10px;
+        border-radius: 4px;
+        border-bottom: 4px solid #b02818;
+        transition: all .2s ease;
+        outline: none;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .remove-image:hover {
+        background: #c13b2a;
+        color: #ffffff;
+        transition: all .2s ease;
+        cursor: pointer;
+    }
+
+    .remove-image:active {
+        border: 0;
+        transition: all .2s ease;
+    }
+</style>
+
+
+<script>
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('.image-upload-wrap').hide();
+
+                $('.file-upload-image').attr('src', e.target.result);
+                $('.file-upload-content').show();
+
+                $('.image-title').html(input.files[0].name);
+            };
+
+            reader.readAsDataURL(input.files[0]);
+
+
+            console.log('1111')
+            
+            
+            //axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+            //axios.defaults.headers.post['Access-Control-Allow-Methods'] = 'GET,PUT,POST,DELETE,PATCH,OPTIONS';
+            //axios.defaults.headers.post['Access-Control-Allow-Credentials'] = true;
+            //axios.defaults.headers.post['Access-Control-Expose-Headers'] = 'Access-Control-Allow-Origin';
+            //axios.defaults.headers.post['Content-Type'] ='application/json;charset=utf-8';
+
+            axios.post('https://sazao66tpl.execute-api.ap-northeast-2.amazonaws.com/dev/v1/video/upload', JSON.stringify({
+                "name": input.files[0].name,
+                "type": input.files[0].type
+            }))
+                .then(function (res) {
+                    console.log(res);
+                    console.log('url ===>', res.data.uploadURL)
+
+                    var options = {
+                            headers: {
+                            'Access-Control-Allow-Origin':'*',
+                            'Access-Control-Allow-Methods':'PUT,POST,DELETE',
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                            }
+                    };
+
+                     axios.post(res.data.uploadURL, reader.result, options)
+                    .then(function (uploaded) {
+                        console.log(uploaded);
+                        alert(uploaded.status)
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+
+
+
+
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+
+
+        } else {
+            removeUpload();
+        }
+    }
+
+    function upload(path, payload) {
+
+        console.log('upload:', path)
+
+        axios.post(path, payload)
+            .then(function (response) {
+                console.log(response);
+                alert(response.status)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
+
+    }
+
+    function removeUpload() {
+        $('.file-upload-input').replaceWith($('.file-upload-input').clone());
+        $('.file-upload-content').hide();
+        $('.image-upload-wrap').show();
+    }
+
+    $('.image-upload-wrap').bind('dragover', function () {
+        $('.image-upload-wrap').addClass('image-dropping');
+    });
+    $('.image-upload-wrap').bind('dragleave', function () {
+        $('.image-upload-wrap').removeClass('image-dropping');
+    });
+
+
+</script>
+
+<!--
+
+            fetch('https://sazao66tpl.execute-api.ap-northeast-2.amazonaws.com/dev/v1/video/upload', {
+                method: 'POST',
+                body: JSON.stringify({
+                    name:input.files[0].name,
+                    type:input.files[0].type;
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+
+                    console.log('222')
+                    console.log(data)
+                    var securityPath = data.uploadURL
+                    console.log('securityPath', securityPath)
+
+                    upload(securityPath, reader.result)
+                })
+                .catch(error => {
+                    console.error(error)
+                })
+
+
+
+        fetch(path, {
+            method: 'POST',
+            headers:{
+                'Access-Control-Allow-Origin': "*",
+                'Access-Control-Allow-Headers': "*"
+            },
+            body: payload
+        })
+            .then(response => response.json())
+            .then(data => {
+
+                console.log('uploaded')
+                //console.log(data)
+            })
+            .catch(error => {
+                console.error(error)
+            })
+
+
+             axios.put(res.data.uploadURL, reader.result, options)
+            .then(function (uploaded) {
+                console.log(uploaded);
+                alert(uploaded.status)
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+-->
