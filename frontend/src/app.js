@@ -4,10 +4,7 @@ import $ from 'jquery';
 window.$ = window.jQuery = $;
 
 
-// require('mediainfo.js/dist/mediainfo.min.js')
-// import 'mediainfo.js/dist/mediainfo.min.js';
 
-const Web3 = require("web3");
 // import Web3 from 'web3'
 window.ethEnabled  = () => {
   if (window.ethereum) {
@@ -22,7 +19,8 @@ window.ethEnabled  = () => {
 
 window.ethereum.on('accountsChanged', function (accounts) {
   // Time to reload your interface with accounts[0]!
-  alert(accounts)
+  //alert(accounts)
+  window.accounts = accounts;
 });
 // this.window.app = {
 //     ethEnabled:function(params) {

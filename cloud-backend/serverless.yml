@@ -42,7 +42,27 @@ iamRoleStatements:
     Action:
       - "s3:*"
     Resource: "arn:aws:s3:::artclip-input/*"
-
+  - Effect: "Allow"
+    Action:
+      - "lambda:InvokeFunction"
+      # - "lambda:InvokeAsync"
+    Resource: "*"  
+  - Effect: Allow
+    Action:
+      - dynamodb:Query
+      - dynamodb:Scan
+      - dynamodb:GetItem
+      - dynamodb:PutItem
+      - dynamodb:UpdateItem
+      - dynamodb:DeleteItem
+    Resource: 
+      - "arn:aws:dynamodb:ap-northeast-2:129219767314:table/artclip"
+  # - Effect: Allow
+  #   Action:
+  #     - dynamodb:Query
+  #     - dynamodb:Scan
+  #   Resource:
+  #     - "index"
 resources: 
   Resources:
     DynamoDbTableArtclip:
@@ -64,6 +84,164 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+
+    LambdaAPIRole:
+      Type: "AWS::IAM::Role"
+      Properties:
+        RoleName: artclip-lambdaAPIRole
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            -
+              Effect: "Allow"
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action:
+                - sts:AssumeRole
+        Path: "/"
+        Policies:
+          -
+            PolicyName: artclip-lambdaAPIPolicy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                -
+                  Effect: "Allow"
+                  Action:
+                    - lambda:ListFunctions
+                    - lambda:InvokeFunction
+                    - lambda:GetFunction
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource: "*"
+
+                # S3 업로드 권한 
+                -
+                  Effect: "Allow"
+                  Action:
+                    - s3:PutObject
+                    - s3:GetObject
+                    - s3:PutObjectAcl
+                  Resource: "arn:aws:s3:::artclip-input/*"
+                -
+                  # Effect: "Allow"
+                  # Action:
+                  #   - s3:PutObject
+                  #   - s3:GetObject
+                  #   - s3:ListBucket
+                  # Resource: 
+                  #   - "arn:aws:s3:::artclip-input/*"
+                  #   - "arn:aws:s3:::artclip-output/*"
+
+                  # Effect: "Allow"
+                  # Action:
+                  #   - s3:DeleteObject
+                  #   - s3:PutObjectTagging
+                  # Resource:
+                  #   - "arn:aws:s3:::artclip-input/*"
+                  #   - "arn:aws:s3:::artclip-output/*"
+                
+                  Effect: "Allow"
+                  Action:
+                    - dynamodb:PutItem
+                    - dynamodb:DeleteItem
+                    - dynamodb:GetItem
+                    - dynamodb:Scan
+                    - dynamodb:Query
+                    - dynamodb:UpdateItem
+                  Resource:
+                    - !GetAtt DynamoDbTableArtclip.Arn
+                 
+                
+    LambdaJobRole1:
+      Type: "AWS::IAM::Role"
+      Properties:
+        RoleName: artclip-lambdaJobRole1
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            -
+              Effect: "Allow"
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action:
+                - sts:AssumeRole
+        Path: "/"
+        Policies:
+          -
+            PolicyName: artclip-lambdaJobPolicy1
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                -
+                  Effect: "Allow"
+                  Action:
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                    - mediaconvert:*
+                    - iam:ListRoles
+                    - lambda:ListFunctions
+                    - lambda:InvokeFunction
+                    - lambda:GetFunction
+                  Resource: "*"
+                -
+                  Effect: "Allow"
+                  Action:
+                    - s3:PutObject
+                    - s3:GetObject
+                  Resource:
+                    - "arn:aws:s3:::artclip-input/*"
+                    - "arn:aws:s3:::artclip-output/*"
+                -
+                  Effect: "Allow"
+                  Action:
+                    - iam:PassRole
+                    - s3:GetBucketNotification
+                    - s3:PutBucketNotification
+                    - dynamodb:PutItem
+                    - dynamodb:DeleteItem
+                    - dynamodb:GetItem
+                    - dynamodb:Scan
+                    - dynamodb:Query
+                    - dynamodb:UpdateItem
+                  Resource:
+                    - !GetAtt MediaConvertRole.Arn
+                    - !GetAtt DynamoDbTableArtclip.Arn
+    MediaConvertRole:
+      Type: "AWS::IAM::Role"
+      Properties:
+        RoleName: artclip-mediaConvertRole1
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            -
+              Effect: "Allow"
+              Principal:
+                Service:
+                  - mediaconvert.amazonaws.com
+              Action:
+                - sts:AssumeRole
+        Path: "/"
+        Policies:
+          -
+            PolicyName: artclip-mediaConvertPolicy1
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                -
+                  Effect: "Allow"
+                  Action: mediaconvert:*
+                  Resource: "*"
+                -
+                  Effect: "Allow"
+                  Action:
+                    - s3:PutObject
+                    - s3:GetObject
+                  Resource:
+                    - "arn:aws:s3:::artclip-input/*"
+                    - "arn:aws:s3:::artclip-output/*"
 
 # you can define service wide environment variables here
   # environment:
@@ -107,6 +285,8 @@ functions:
             origin: '*'
             headers: ${self:custom.allow-headers}
             allowCredentials: false
+    # role: arn:aws:iam::129219767314:role/artclip-lambda-job-role
+    role: LambdaJobRole1
 
   s3_trigger:
     runtime: python3.7
@@ -116,10 +296,24 @@ functions:
           bucket: artclip-input
           events:
             - s3:ObjectCreated:*
-    role: arn:aws:iam::129219767314:role/artclip-lambda-job-role
+    # role: arn:aws:iam::129219767314:role/artclip-lambda-job-role
+    # role: artclip-lambdaJobRole
+    role: LambdaJobRole1
 
+  list_all:
+    runtime: nodejs12.x
+    handler: src/node/list.all
+    events:
+      - http:
+          path: ${self:custom.base}/video/upload/
+          method: get
+          cors:
+            origin: '*'
+            headers: ${self:custom.allow-headers}
+            allowCredentials: false
+    
 
-
+  
     
     
 #    The following are a few example events you can configure

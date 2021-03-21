@@ -60,7 +60,7 @@ def convert_video(event, context):
     try:
 
         response = table.scan(
-            FilterExpression=Key('key').eq(sourceS3Key)
+            FilterExpression=Key('title').eq(sourceS3Key)
         )
 
         print('Items', response['Items'])
@@ -112,7 +112,9 @@ def create_job(sourceS3Bucket, sourceS3Key,  mediaConvertRole, region, table, it
     
 
     # mediainfo YGL
-    mediainfo = item['mediainfo']
+    mediainfo = item['mediainfo']['media']['track']
+
+    print('mediainfo:::', mediainfo)
     media_width = mediainfo[1]['Width']
     media_height = mediainfo[1]['Height']
     fps = int(float(mediainfo[1]['FrameCount']) / float(mediainfo[1]['Duration']))

@@ -1,6 +1,10 @@
 'use strict';
+
 const AWS = require('aws-sdk');
 AWS.config.update({ region: "ap-northeast-2" });
+
+const DbArtclip = require('./dynamo/artclip.dynamo')
+
 
 module.exports.video_content = async (event, context) => {
   
@@ -9,9 +13,18 @@ module.exports.video_content = async (event, context) => {
     signatureVersion: "v4"
   });
 
+  /**** need account's crypto-session check !!! */
+
   console.log('event.body::',event.body)
   const params = JSON.parse(event.body);
   console.log(params)
+
+  const dbArtclip = new DbArtclip();
+
+  const paserdInfo = JSON.parse(params.mediainfo)
+
+  const db_res = await dbArtclip.put(params.account,params.name, paserdInfo, 'artclip-input'+params.name, params.type)
+  console.log('saved !!!!', db_res);
 
   const s3Params = {
     Bucket: 'artclip-input',
@@ -29,7 +42,8 @@ module.exports.video_content = async (event, context) => {
       'Access-Control-Allow-Origin': '*'
     },
     body: JSON.stringify({
-      uploadURL
+      uploadURL,
+      "result":db_res
     }),
   };
   return response

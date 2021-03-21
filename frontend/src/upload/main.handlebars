@@ -20,6 +20,22 @@
             style="width: 520px;height:500px;"></textarea>
 
     </div>
+    <div id="loading_circle" class="circle" style="display: none;">
+
+    </div>
+</div>
+
+
+<div class="relative px-4 py-3 leading-normal text-red-700 bg-red-100 rounded-lg" role="alert">
+    <span class="absolute inset-y-0 left-0 flex items-center ml-4">
+        <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+            <path
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clip-rule="evenodd" fill-rule="evenodd"></path>
+        </svg>
+    </span>
+    <p class="ml-6">Exception handling is insufficient because it is under development. If a same file's name exists on
+        the server, an error occurs. Limit to content with a duration of 1 minute or longer.</p>
 </div>
 
 <style>
@@ -139,19 +155,73 @@
         border: 0;
         transition: all .2s ease;
     }
+
+    .circle {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 200px;
+        height: 200px;
+        background: transparent;
+        border: 13px solid rgba(196, 191, 191, 0.3);
+        border-radius: 50%;
+        border-top: 13px solid rgb(58, 57, 57);
+        animation: animate 2s infinite linear;
+        padding: 0;
+        margin: 0;
+    }
+
+    @keyframes animate {
+        0% {
+            transform: translate(-50%, -50%) rotate(0deg);
+        }
+
+        100% {
+            transform: translate(-50%, -50%) rotate(360deg);
+        }
+    }
 </style>
 
 
 <script>
 
     const fileinput = document.getElementById('fileinput')
-    MediaInfo({ format: 'text' }, (mediainfo) => {
-        fileinput.addEventListener('change', () => readURL(mediainfo))
+    MediaInfo({ format: 'JSON' }, (mediainfo) => {
+        fileinput.addEventListener('change', () => autherize(mediainfo))
     })
 
+    function autherize(mediainfo) {
 
-    function readURL(mediainfo) {
+        const isAuth = window.ethEnabled();
+        if (isAuth) {
+            var storage_accounts = localStorage.getItem('accounts');
 
+            console.log('account:', window.accounts)
+            console.log('storage_accounts', storage_accounts)
+            if (fileinput.files && fileinput.files[0]) {
+                if (window.accounts && window.accounts > 0) {
+                    this.readURL(mediainfo, accounts[0])
+                } else {
+                    if(storage_accounts){
+                        this.readURL(mediainfo, storage_accounts)
+                    }else{
+                        alert(' Active wallet account is not found')
+                        $("#fileinput").val('')
+                    }
+                }
+            }else {
+                console.log('file not found !!!')
+                $("#fileinput").val('')
+            }
+
+        } else {
+            console.log('not auth')
+            $("#fileinput").val('')
+        }
+    }
+
+    function readURL(mediainfo, currentAccount) {
+        $('#loading_circle').show()
         if (fileinput.files && fileinput.files[0]) {
 
             var file = fileinput.files[0];
@@ -165,6 +235,7 @@
                 $('.file-upload-content').show();
 
                 $('.image-title').html(file.name);
+
             };
 
             reader.readAsDataURL(file);
@@ -192,10 +263,11 @@
                     //output.value = result
                     $('#file_info').val(result);
 
-                    axios.post('https://sazao66tpl.execute-api.ap-northeast-2.amazonaws.com/dev/v1/video/upload', JSON.stringify({
+                    axios.post('https://s20eb48fgl.execute-api.ap-northeast-2.amazonaws.com/dev/v1/video/upload', JSON.stringify({
                         "name": file.name,
                         "type": file.type,
-                        "mediainfo":result
+                        "account": currentAccount,
+                        "mediainfo": result
                     }))
                         .then(function (res) {
                             console.log(res);
@@ -208,24 +280,34 @@
                                     'x-amz-acl': 'public-read'
                                 }
                             };
-
-                            axios.post(res.data.uploadURL, reader.result, options)
+                            console.log('res:', res)
+                            console.log('url:', res.data.uploadURL)
+                            //var myFile = reader.result;
+                            //const myNewFile = new File([myFile], uuid.v4(), { type: myFile.type });
+                            axios.put(res.data.uploadURL, reader.result, options)
                                 .then(function (uploaded) {
                                     console.log(uploaded);
-                                    alert(uploaded.status)
+
+                                    if (uploaded.status == 200) {
+                                        alert('upload complete !!')
+                                        $('#loading_circle').hide()
+                                    }
                                 })
                                 .catch(function (error) {
                                     console.log('error >>>>>>>>>>>>>')
                                     console.log(error);
+                                    $('#loading_circle').hide()
                                 });
 
                         })
                         .catch(function (error) {
                             console.log(error);
+                            $('#loading_circle').hide()
                         });
                 })
                 .catch((error) => {
                     console.log(`An error occured:\n${error.stack}`)
+                    $('#loading_circle').hide()
                 })
 
 
@@ -262,14 +344,15 @@
         $('.file-upload-content').hide();
         $('.image-upload-wrap').show();
 
+        $("#fileinput").val('')
 
-        var cloned = $("#fileinput").clone(true);
-        cloned.val("");
-        $("#fileinput").replaceWith(cloned);
+        //var cloned = $("#fileinput").clone(true);
+        //cloned.val("");
+        //$("#fileinput").replaceWith(cloned);
 
-        MediaInfo({ format: 'text' }, (mediainfo) => {
-            cloned.addEventListener('change', () => readURL(mediainfo))
-        })
+        //MediaInfo({ format: 'text' }, (mediainfo) => {
+        //  cloned.addEventListener('change', () => readURL(mediainfo))
+        //})
 
     }
 
