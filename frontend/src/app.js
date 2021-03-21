@@ -4,6 +4,8 @@ import $ from 'jquery';
 window.$ = window.jQuery = $;
 
 
+// require('mediainfo.js/dist/mediainfo.min.js')
+// import 'mediainfo.js/dist/mediainfo.min.js';
 
 const Web3 = require("web3");
 // import Web3 from 'web3'

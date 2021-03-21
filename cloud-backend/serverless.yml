@@ -20,9 +20,12 @@ service: cloud-backend
 # Check out our docs for more details
 # frameworkVersion: "=X.X.X"
 
+plugins:
+  - serverless-plugin-existing-s3
+  - serverless-python-requirements
+
 provider:
   name: aws
-  runtime: nodejs12.x
   region: ap-northeast-2
   profile: artclip-devmin
   deploymentBucket:
@@ -93,7 +96,6 @@ custom:
 
     
 functions:
-
   upload:
     runtime: nodejs12.x
     handler: src/node/upload.video_content
@@ -105,6 +107,21 @@ functions:
             origin: '*'
             headers: ${self:custom.allow-headers}
             allowCredentials: false
+
+  s3_trigger:
+    runtime: python3.7
+    handler: s3_trigger.convert_video
+    events:
+      - existingS3:
+          bucket: artclip-input
+          events:
+            - s3:ObjectCreated:*
+    role: arn:aws:iam::129219767314:role/artclip-lambda-job-role
+
+
+
+    
+    
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details

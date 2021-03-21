@@ -3,7 +3,7 @@
         Video</button>
 
     <div class="image-upload-wrap">
-        <input class="file-upload-input" type='file' onchange="readURL(this);" accept="video/*" />
+        <input id="fileinput" class="file-upload-input" type='file' accept="video/*" />
         <div class="drag-text">
             <h3>Drag and drop a file or select add Video</h3>
         </div>
@@ -13,9 +13,12 @@
         <canvas id="canvas-element"></canvas>
 
         <div class="image-title-wrap">
-            <button type="button" onclick="removeUpload()" class="remove-video">Remove <span
+            <button type="button" onclick="removeUpload()" class="remove-image">Remove <span
                     class="image-title">Uploaded Video</span></button>
         </div>
+        <textarea id="file_info" class="resize-none border rounded-md resize"
+            style="width: 520px;height:500px;"></textarea>
+
     </div>
 </div>
 
@@ -111,7 +114,7 @@
     }
 
     .remove-image {
-        width: 200px;
+        width: 500px;
         margin: 0;
         color: rgb(247, 164, 164);
         background: #cd4535;
@@ -141,8 +144,17 @@
 
 <script>
 
-    function readURL(input) {
-        if (input.files && input.files[0]) {
+    const fileinput = document.getElementById('fileinput')
+    MediaInfo({ format: 'text' }, (mediainfo) => {
+        fileinput.addEventListener('change', () => readURL(mediainfo))
+    })
+
+
+    function readURL(mediainfo) {
+
+        if (fileinput.files && fileinput.files[0]) {
+
+            var file = fileinput.files[0];
 
             var reader = new FileReader();
 
@@ -152,59 +164,78 @@
                 $('.file-upload-image').attr('src', e.target.result);
                 $('.file-upload-content').show();
 
-                $('.image-title').html(input.files[0].name);
+                $('.image-title').html(file.name);
             };
 
-            reader.readAsDataURL(input.files[0]);
+            reader.readAsDataURL(file);
+
+            const getSize = () => file.size;
+
+            const readChunk = (chunkSize, offset) =>
+
+                new Promise((resolve, reject) => {
+                    const reader = new FileReader()
+                    reader.onload = (event) => {
+                        if (event.target.error) {
+                            reject(event.target.error)
+                        }
+                        resolve(new Uint8Array(event.target.result))
+
+                    }
+                    reader.readAsArrayBuffer(file.slice(offset, offset + chunkSize))
+                })
 
 
-            console.log('1111')
-            
-            
+            mediainfo
+                .analyzeData(getSize, readChunk)
+                .then((result) => {
+                    //output.value = result
+                    $('#file_info').val(result);
+
+                    axios.post('https://sazao66tpl.execute-api.ap-northeast-2.amazonaws.com/dev/v1/video/upload', JSON.stringify({
+                        "name": file.name,
+                        "type": file.type,
+                        "mediainfo":result
+                    }))
+                        .then(function (res) {
+                            console.log(res);
+                            console.log('url ===>', res.data.uploadURL)
+
+                            var options = {
+                                headers: {
+                                    'Access-Control-Allow-Origin': '*',
+                                    'Access-Control-Allow-Methods': 'HEAD,GET,PUT,POST,DELETE',
+                                    'x-amz-acl': 'public-read'
+                                }
+                            };
+
+                            axios.post(res.data.uploadURL, reader.result, options)
+                                .then(function (uploaded) {
+                                    console.log(uploaded);
+                                    alert(uploaded.status)
+                                })
+                                .catch(function (error) {
+                                    console.log('error >>>>>>>>>>>>>')
+                                    console.log(error);
+                                });
+
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                })
+                .catch((error) => {
+                    console.log(`An error occured:\n${error.stack}`)
+                })
+
+
+            return;
+
             axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
             axios.defaults.headers.post['Access-Control-Allow-Methods'] = 'HEAD,GET,PUT,POST,DELETE';
             //axios.defaults.headers.post['Access-Control-Allow-Credentials'] = true;
             //axios.defaults.headers.post['Access-Control-Expose-Headers'] = 'Access-Control-Allow-Origin';
             //axios.defaults.headers.post['Content-Type'] ='application/json;charset=utf-8';
-
-            //console.log(JSON.stringify({
-            //    "name": input.files[0].name,
-            //    "type": input.files[0].type
-            //}))
-
-            axios.post('https://sazao66tpl.execute-api.ap-northeast-2.amazonaws.com/dev/v1/video/upload', JSON.stringify({
-                "name": input.files[0].name,
-                "type": input.files[0].type
-            }))
-                .then(function (res) {
-                    console.log(res);
-                    console.log('url ===>', res.data.uploadURL)
-
-                    var options = {
-                            headers: {
-                            'Access-Control-Allow-Origin':'*',
-                            'Access-Control-Allow-Methods':'HEAD,GET,PUT,POST,DELETE',
-                            'x-amz-acl':'public-read'
-                            }
-                    };
-
-                     axios.post(res.data.uploadURL, reader.result, options)
-                    .then(function (uploaded) {
-                        console.log(uploaded);
-                        alert(uploaded.status)
-                    })
-                    .catch(function (error) {
-                        console.log('error >>>>>>>>>>>>>')
-                        console.log(error);
-                    });
-
-
-
-
-                })
-                .catch(function (error) {
-                    console.log(error);
-                });
 
 
         } else {
@@ -224,14 +255,22 @@
             .catch(function (error) {
                 console.log(error);
             });
-
-
     }
 
     function removeUpload() {
         $('.file-upload-input').replaceWith($('.file-upload-input').clone());
         $('.file-upload-content').hide();
         $('.image-upload-wrap').show();
+
+
+        var cloned = $("#fileinput").clone(true);
+        cloned.val("");
+        $("#fileinput").replaceWith(cloned);
+
+        MediaInfo({ format: 'text' }, (mediainfo) => {
+            cloned.addEventListener('change', () => readURL(mediainfo))
+        })
+
     }
 
     $('.image-upload-wrap').bind('dragover', function () {

@@ -1,0 +1,25 @@
+{
+    "deployment": {
+        "bucket": "artclip-serverless",
+        "region": "ap-northeast-2"
+    },
+    "videos": {
+        "inputBucket": "artclip-input",
+        "outputBucket": "artclip-output",
+        "dynamodbTable": "artclip",
+        "roles": {
+            "lambdaAPIRole": "artclip-lambda-api-role",
+            "lambdaJobRole": "artclip-lambda-job-role",
+            "mediaConvertRole": "artclip-mediaconvert-job-role"
+        },
+        "policies": {
+            "lambdaAPIPolicy": "artclip-lambda-api-policy",
+            "lambdaJobPolicy": "artclip-lambda-job-policy",
+            "mediaConvertPolicy": "artclip-mediaconvert-job-policy"
+        },
+        "distribution": {
+            "baseUrl": "https://d3oqijrag8ylej.cloudfront.net/"
+        }
+        
+    }
+}
