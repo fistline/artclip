@@ -1,0 +1,97 @@
+<section id="regist" class="w-screen flex items-center justify-center p-10 bg-gray-200">
+
+
+<div id="pd_container" class="grid grid-cols-2 gap-4 flex justify-center items-center m-8">
+   <!-- Start of component -->
+   <div class="max-w-2xl bg-white border-2 border-gray-300 p-5 rounded-md tracking-wide shadow-lg">
+      <div id="header" class="flex"> 
+         <img alt="mountain" class="w-45 rounded-md border-2 border-gray-300" src="https://picsum.photos/seed/picsum/200" />
+         <div id="body" class="flex flex-col ml-5">
+            <h4 id="name" class="text-xl font-semibold mb-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit</h4>
+            <p id="job" class="text-gray-800 mt-2">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <div class="flex mt-5">
+                  <button type="button" class="focus:outline-none text-white text-sm py-2 px-2.5 mx-2 rounded-md bg-blue-500 hover:bg-blue-600 hover:shadow-lg">deploy all</button>
+                  <button type="button" class="focus:outline-none text-white text-sm py-2 px-2.5 mx-2rounded-md bg-gray-500 hover:bg-gray-600 hover:shadow-lg">detail</button>
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <div class="max-w-2xl bg-white border-2 border-gray-300 p-5 rounded-md tracking-wide shadow-lg">
+      <div id="header" class="flex"> 
+         <img alt="mountain" class="w-45 rounded-md border-2 border-gray-300" src="https://picsum.photos/seed/picsum/200" />
+         <div id="body" class="flex flex-col ml-5">
+            <h4 id="name" class="text-xl font-semibold mb-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit</h4>
+            <p id="job" class="text-gray-800 mt-2">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <div class="flex mt-5">
+               <img alt="avatar" class="w-6 rounded-full border-2 border-gray-300" src="https://picsum.photos/seed/picsum/200" />
+               <p class="ml-3">John Doe</p>
+            </div>
+         </div>
+      </div>
+   </div>
+   <!-- End of component -->
+</div>
+
+</section>
+
+<style>
+
+</style>
+
+
+
+<script>
+
+
+
+    function load(path, payload) {
+
+        axios.get('', payload)
+            .then(function (response) {
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
+
+
+   function getChild(){
+      var div = document.createElement('div');
+      div.className ="max-w-2xl bg-white border-2 border-gray-300 p-5 rounded-md tracking-wide shadow-lg";
+      //div.insertAdjacentHTML('afterbegin', '<div class="max-w-2xl bg-white border-2 border-gray-300 p-5 rounded-md tracking-wide shadow-lg">');
+         div.insertAdjacentHTML('afterbegin', '<div id="header" class="flex">');
+            div.insertAdjacentHTML('afterbegin', '<img alt="mountain" class="w-45 rounded-md border-2 border-gray-300" src="https://picsum.photos/seed/picsum/200" />');
+            div.insertAdjacentHTML('afterbegin', '<div id="body" class="flex flex-col ml-5">');
+               div.insertAdjacentHTML('afterbegin', '<h4 id="name" class="text-xl font-semibold mb-2">Lorem ipsum dolor sit amet, consectetur adipiscing elit</h4>');
+               div.insertAdjacentHTML('afterbegin', '<p id="job" class="text-gray-800 mt-2">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>');
+               div.insertAdjacentHTML('afterbegin', '<div class="flex mt-5">');
+                     div.insertAdjacentHTML('afterbegin', '<button type="button" class="focus:outline-none text-white text-sm py-2 px-2.5 mx-2 rounded-md bg-blue-500 hover:bg-blue-600 hover:shadow-lg">deploy all</button>');
+                     div.insertAdjacentHTML('afterbegin', '<button type="button" class="focus:outline-none text-white text-sm py-2 px-2.5 mx-2rounded-md bg-gray-500 hover:bg-gray-600 hover:shadow-lg">detail</button>');
+               div.insertAdjacentHTML('afterbegin', '</div>');
+            div.insertAdjacentHTML('afterbegin', '</div>');
+         div.insertAdjacentHTML('afterbegin', '</div>');
+      //div.insertAdjacentHTML('afterbegin', '</div>');
+
+   return div
+   }
+   function render(arr){
+
+       var pdc = $('#pd_container');
+       for(var i =0; 0<=arr.length; ++i){
+          const item = arr[i];
+
+          var div = document.createElement('div');
+          div.className ="max-w-2xl bg-white border-2 border-gray-300 p-5 rounded-md tracking-wide shadow-lg";
+          pdc.append(div)
+       }
+
+
+    }
+
+
+   let arr = new Array(3)
+   render(arr)
+
+</script>

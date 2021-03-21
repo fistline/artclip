@@ -75,18 +75,41 @@ module.exports = class DbArtclip {
         });
     }
 
-
-    list() {
-        // var table = 'tms_rules'; // process.env.DYNAMODB_RULE_TABLE;
+    get(pkid) {
         var params = {
             TableName: this.table,
-            // KeyConditionExpression: "#sp = :sp",
-            // FilterExpression:"#sp = :sp",
+            KeyConditionExpression: "#pk = :pk",
             ExpressionAttributeNames: {
-                // "#": "",
+                "#pk": "pk",
             },
             ExpressionAttributeValues: {
-                // ":": 
+                ":pk": pkid
+            }
+        }
+        // console.log('pk:', params)
+        return new Promise((resolve, reject) => {
+            this.docClient.query(params, function (error, data) {
+                if (error) {
+                    console.log('db error: get(',params,')', error)
+                    reject(error)
+                } else {
+                    console.log('get db complete')
+                    resolve(data)
+                }
+            })
+        });
+    }
+
+    list() {
+        var params = {
+            TableName: this.table,
+            KeyConditionExpression: "#status = :status",
+            FilterExpression:"#status = :status",
+            ExpressionAttributeNames: {
+                "#status": "status",
+            },
+            ExpressionAttributeValues: {
+                ":status": "pendding"
             }
         }
         // console.log('list:', params)

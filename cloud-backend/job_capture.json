@@ -1,0 +1,170 @@
+{
+    "Queue": "arn:aws:mediaconvert:ap-northeast-2:129219767314:queues/Default",
+    "UserMetadata": {},
+    "Role": "arn:aws:iam::129219767314:role/artclip-mediaConvertRole1",
+    "Settings": {
+      "TimecodeConfig": {
+        "Source": "ZEROBASED"
+      },
+      "OutputGroups": [
+        {
+          "Name": "File Group",
+          "Outputs": [
+            {
+              "ContainerSettings": {
+                "Container": "MP4",
+                "Mp4Settings": {
+                  "CslgAtom": "INCLUDE",
+                  "CttsVersion": 0,
+                  "FreeSpaceBox": "EXCLUDE",
+                  "MoovPlacement": "PROGRESSIVE_DOWNLOAD",
+                  "AudioDuration": "DEFAULT_CODEC_DURATION"
+                }
+              },
+              "VideoDescription": {
+                "ScalingBehavior": "DEFAULT",
+                "TimecodeInsertion": "DISABLED",
+                "AntiAlias": "ENABLED",
+                "Sharpness": 50,
+                "CodecSettings": {
+                  "Codec": "H_264",
+                  "H264Settings": {
+                    "InterlaceMode": "PROGRESSIVE",
+                    "ScanTypeConversionMode": "INTERLACED",
+                    "NumberReferenceFrames": 3,
+                    "Syntax": "DEFAULT",
+                    "Softness": 0,
+                    "GopClosedCadence": 1,
+                    "GopSize": 90,
+                    "Slices": 1,
+                    "GopBReference": "DISABLED",
+                    "MaxBitrate": 160000,
+                    "SlowPal": "DISABLED",
+                    "EntropyEncoding": "CABAC",
+                    "FramerateControl": "INITIALIZE_FROM_SOURCE",
+                    "RateControlMode": "QVBR",
+                    "QvbrSettings": {
+                      "QvbrQualityLevel": 7,
+                      "QvbrQualityLevelFineTune": 0
+                    },
+                    "CodecProfile": "MAIN",
+                    "Telecine": "NONE",
+                    "MinIInterval": 0,
+                    "AdaptiveQuantization": "AUTO",
+                    "CodecLevel": "AUTO",
+                    "FieldEncoding": "PAFF",
+                    "SceneChangeDetect": "ENABLED",
+                    "QualityTuningLevel": "SINGLE_PASS",
+                    "FramerateConversionAlgorithm": "DUPLICATE_DROP",
+                    "UnregisteredSeiTimecode": "DISABLED",
+                    "GopSizeUnits": "FRAMES",
+                    "ParControl": "INITIALIZE_FROM_SOURCE",
+                    "NumberBFramesBetweenReferenceFrames": 2,
+                    "RepeatPps": "DISABLED",
+                    "DynamicSubGop": "STATIC"
+                  }
+                },
+                "AfdSignaling": "NONE",
+                "DropFrameTimecode": "ENABLED",
+                "RespondToAfd": "NONE",
+                "ColorMetadata": "INSERT"
+              },
+              "AudioDescriptions": [
+                {
+                  "AudioTypeControl": "FOLLOW_INPUT",
+                  "CodecSettings": {
+                    "Codec": "AAC",
+                    "AacSettings": {
+                      "AudioDescriptionBroadcasterMix": "NORMAL",
+                      "Bitrate": 96000,
+                      "RateControlMode": "CBR",
+                      "CodecProfile": "LC",
+                      "CodingMode": "CODING_MODE_2_0",
+                      "RawFormat": "NONE",
+                      "SampleRate": 48000,
+                      "Specification": "MPEG4"
+                    }
+                  },
+                  "LanguageCodeControl": "FOLLOW_INPUT"
+                }
+              ],
+              "NameModifier": "-seq02"
+            },
+            {
+              "ContainerSettings": {
+                "Container": "RAW"
+              },
+              "VideoDescription": {
+                "ScalingBehavior": "DEFAULT",
+                "TimecodeInsertion": "DISABLED",
+                "AntiAlias": "ENABLED",
+                "Sharpness": 50,
+                "CodecSettings": {
+                  "Codec": "FRAME_CAPTURE",
+                  "FrameCaptureSettings": {
+                    "FramerateNumerator": 30,
+                    "FramerateDenominator": 88,
+                    "MaxCaptures": 6,
+                    "Quality": 80
+                  }
+                },
+                "DropFrameTimecode": "ENABLED",
+                "ColorMetadata": "INSERT"
+              },
+              "NameModifier": "cap"
+            }
+          ],
+          "OutputGroupSettings": {
+            "Type": "FILE_GROUP_SETTINGS",
+            "FileGroupSettings": {
+              "Destination": "s3://artclip-output/"
+            }
+          }
+        }
+      ],
+      "AdAvailOffset": 0,
+      "Inputs": [
+        {
+          "AudioSelectors": {
+            "Audio Selector 1": {
+              "Offset": 0,
+              "DefaultSelection": "DEFAULT",
+              "ProgramSelection": 1
+            }
+          },
+          "VideoSelector": {
+            "ColorSpace": "FOLLOW",
+            "Rotate": "DEGREE_0",
+            "AlphaBehavior": "DISCARD"
+          },
+          "FilterEnable": "AUTO",
+          "PsiControl": "USE_PSI",
+          "FilterStrength": 0,
+          "DeblockFilter": "DISABLED",
+          "DenoiseFilter": "DISABLED",
+          "InputScanType": "AUTO",
+          "TimecodeSource": "ZEROBASED",
+          "ImageInserter": {
+            "InsertableImages": [
+              {
+                "Width": 105,
+                "Height": 60,
+                "ImageX": 15,
+                "ImageY": 15,
+                "Layer": 1,
+                "ImageInserterInput": "s3://artclip-input/artclip_letter.png",
+                "StartTime": "00:00:00:00",
+                "Opacity": 85
+              }
+            ]
+          },
+          "FileInput": "s3://artclip-input/videoplayback_07.mp4"
+        }
+      ]
+    },
+    "AccelerationSettings": {
+      "Mode": "DISABLED"
+    },
+    "StatusUpdateInterval": "SECONDS_60",
+    "Priority": 0
+  }

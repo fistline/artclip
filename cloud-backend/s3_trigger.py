@@ -67,7 +67,14 @@ def convert_video(event, context):
         
         for item in response['Items']:
             item['status'] = "transcoding"
-            
+
+        # mediainfo = 
+            # # out_cnt = float(mediainfo[1]['Duration'])) / 30000.0
+        duration = int(float(item['mediainfo']['media']['track'][1]['Duration']))
+
+        cntJob = duration/30
+        remain = duration % 30
+
         create_job(sourceS3Bucket=sourceS3Bucket,
                     sourceS3Key=sourceS3Key,
                     mediaConvertRole=mediaConvertRole,
@@ -102,15 +109,14 @@ def convert_video(event, context):
             'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'}
         }
 
-
-
 def create_job(sourceS3Bucket, sourceS3Key,  mediaConvertRole, region, table, item):
 
     # sourceS3Key = parse.urlencode(sourceS3Key, doseq=True)
     destinationS3 = 's3://artclip-output/' + sourceS3Key + '/'
     # get_config("videos", "outputBucket") + '/' + sourceS3Key + '/'
     
-
+    
+    
     # mediainfo YGL
     mediainfo = item['mediainfo']['media']['track']
 
@@ -135,7 +141,7 @@ def create_job(sourceS3Bucket, sourceS3Key,  mediaConvertRole, region, table, it
 
     # Job settings are in the lambda zip file in the current working directory
     with open('job.json') as json_data:
-        jobSettings = json.load(json_data)
+        jobSettings = json.load(json_data)['Settings']
 
     # Update the job settings with the source video from the S3 event and destination
     # paths for converted videos
@@ -153,41 +159,42 @@ def create_job(sourceS3Bucket, sourceS3Key,  mediaConvertRole, region, table, it
     jobSettings["Inputs"][0]['InputClippings'][0]['StartTimecode']
     jobSettings["Inputs"][0]['InputClippings'][0]['EndTimecode']
 
-    jobSettings["Inputs"][0]['ImageInserter']['InsertableImages'][0]['ImageX'] = width - 125
-    jobSettings["Inputs"][0]['ImageInserter']['InsertableImages'][0]['ImageY'] = height - 20
+    # jobSettings["Inputs"][0]['ImageInserter']['InsertableImages'][0]['ImageX'] = width - 125
+    # jobSettings["Inputs"][0]['ImageInserter']['InsertableImages'][0]['ImageY'] = height - 20
     
-    # out_cnt = float(mediainfo[1]['Duration'])) / 30000.0
+    # # //00:02:00:00
+    # # out_cnt = float(mediainfo[1]['Duration'])) / 30000.0
 
 
-    output['VideoDescription']['Width'] = width
-    output['VideoDescription']['Height'] = height
-    MaxBitrate = width * height * fps * 0.16
-    output['VideoDescription']['CodecSettings']['H265Settings']['MaxBitrate'] = int(MaxBitrate)
+    # output['VideoDescription']['Width'] = width
+    # output['VideoDescription']['Height'] = height
+    # MaxBitrate = width * height * fps * 0.16
+    # output['VideoDescription']['CodecSettings']['H265Settings']['MaxBitrate'] = int(MaxBitrate)
 
-    # thumbnails 
-    jobSettings["OutputGroups"][1]['Outputs'][0]['VideoDescription']['Width'] = int(media_width)
-    jobSettings["OutputGroups"][1]['Outputs'][0]['VideoDescription']['Height'] = int(media_height)
+    # # thumbnails 
+    # jobSettings["OutputGroups"][1]['Outputs'][0]['VideoDescription']['Width'] = int(media_width)
+    # jobSettings["OutputGroups"][1]['Outputs'][0]['VideoDescription']['Height'] = int(media_height)
 
-    # thumbnail
-    basewidth = 300
-    wpercent = (basewidth / float(media_width))
-    hsize = int((float(media_height) * float(wpercent)))
-    if (hsize % 2) != 0:
-       hsize = hsize - 1
-    jobSettings["OutputGroups"][2]['Outputs'][0]['VideoDescription']['Width'] = basewidth
-    jobSettings["OutputGroups"][2]['Outputs'][0]['VideoDescription']['Height'] = hsize
+    # # thumbnail
+    # basewidth = 300
+    # wpercent = (basewidth / float(media_width))
+    # hsize = int((float(media_height) * float(wpercent)))
+    # if (hsize % 2) != 0:
+    #    hsize = hsize - 1
+    # jobSettings["OutputGroups"][2]['Outputs'][0]['VideoDescription']['Width'] = basewidth
+    # jobSettings["OutputGroups"][2]['Outputs'][0]['VideoDescription']['Height'] = hsize
 
-    print('outputs:')
-    print(json.dumps(outputs))
+    # print('outputs:')
+    # print(json.dumps(outputs))
 
-    jobSettings["OutputGroups"][0]['Outputs'] = outputs
-    jobSettings["Inputs"][0]['FileInput'] = 's3://' + sourceS3Bucket + '/' + sourceS3Key
-    jobSettings["OutputGroups"][0]['OutputGroupSettings']['CmafGroupSettings']['Destination'] = destinationS3
-    jobSettings["OutputGroups"][1]['OutputGroupSettings']['FileGroupSettings']['Destination'] = destinationS3 + 'thumbnails/'
-    jobSettings["OutputGroups"][2]['OutputGroupSettings']['FileGroupSettings']['Destination'] = destinationS3 + 'thumbnail/'
+    # jobSettings["OutputGroups"][0]['Outputs'] = outputs
+    # jobSettings["Inputs"][0]['FileInput'] = 's3://' + sourceS3Bucket + '/' + sourceS3Key
+    # jobSettings["OutputGroups"][0]['OutputGroupSettings']['CmafGroupSettings']['Destination'] = destinationS3
+    # jobSettings["OutputGroups"][1]['OutputGroupSettings']['FileGroupSettings']['Destination'] = destinationS3 + 'thumbnails/'
+    # jobSettings["OutputGroups"][2]['OutputGroupSettings']['FileGroupSettings']['Destination'] = destinationS3 + 'thumbnail/'
 
-    print('jobSettings:')
-    print(json.dumps(jobSettings))
+    # print('jobSettings:')
+    # print(json.dumps(jobSettings))
 
     # Convert the video using AWS Elemental MediaConvert
     job = client.create_job(Role=mediaConvertRole, UserMetadata=jobMetadata, Settings=jobSettings)

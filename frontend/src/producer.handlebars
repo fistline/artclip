@@ -9,10 +9,10 @@
     <meta property="og:title" content="artclip - register" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://www.artclip.co/register.html" />	
-    <meta property="og:image" content="assets/img/artclip.png" />
+    <meta property="og:image" content="assets/imgs/artclip.jpg" />
     <meta property="og:description"  content="artclip - register" />
-    <link rel="shortcut icon" href="assets/img/artclip.png" />
-
+     <link rel="shortcut icon" href="assets/imgs/artclip.jpg" />
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <title>Artclip</title>
     <!--[if lt IE 9]>
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -40,7 +40,8 @@
         <div class="content text-black" >
             
             {{> main/01Nav}}
-            {{> register/register}}
+            {{!-- {{> producer/main}} --}}
+            {{> producer/root}}
             {{> main/footer}}
             {{> main/cookie-check}}
 

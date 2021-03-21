@@ -1,0 +1,365 @@
+<section>
+
+  <!-- Thumbs -->
+  <ul class="posts-box">
+    <!-- JSON Here! -->
+  </ul>
+
+  <!-- Modal -->
+  <div class="modal" id="modal-name">
+    <div class="modal-sandbox"></div>
+    <div class="modal-box">
+      <div class="modal-header">
+        <img src="" class="inner-img" alt="">
+      </div>
+      <div class="modal-body">
+        <h2 class="inner-title"></h2>
+        <div class="inner-text"></div>
+        <button class="prev-post">Previous</button>
+        <button class="next-post">Next</button>
+        <button class="close-post">Close</button>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<script>
+
+/*
+===============================================================
+
+Hi! Welcome to my little playground!
+
+My name is Tobias Bogliolo. 'Open source' by default and always 'responsive',
+I'm a publicist, visual designer and frontend developer based in Barcelona. 
+
+Here you will find some of my personal experiments. Sometimes usefull,
+sometimes simply for fun. You are free to use them for whatever you want 
+but I would appreciate an attribution from my work. I hope you enjoy it.
+
+===============================================================
+*/
+
+/*
+=====================
+=====================
+JSON list
+=====================
+=====================
+*/
+var post=[
+  {
+    postTitle: "Lorem ipsum dolor",
+    postAbstract: "Voluptates sit ducimus velit soluta ed doloribus iste commodi deserunt aut unde, numquam illo, unde.",
+    postContent: "<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis, molestiae placeat, inventore eligendi qui deserunt asperiores error laboriosam libero blanditiis dignissimos eius molestias cumque necessitatibus est. <b>Quae velit ad cupiditate necessitatibus</b>, facere eum earum ut odio nostrum labore a explicabo quasi voluptates, consequatur obcaecati quos, quis fugiat veniam ea ipsam consequuntur illo!</p><p>Aperiam fugit nulla, praesentium doloremque harum laborum ipsam officia minima. Alias saepe cumque mollitia soluta totam facere, iusto ab officiis cum itaque! Sit sint earum sequi quae mollitia quibusdam adipisci facere explicabo libero nihil! Velit aliquam asperiores possimus eligendi dolore reprehenderit similique suscipit.</p>",
+    postThumb: "https://drive.google.com/uc?id=1XlEn94sZcbvOmeP3Ws5tWrrB3d8Qygc7",
+    postImg: "https://drive.google.com/uc?id=12RhLJZygX4IJfcc5nFH_eJ4H2x_XuIuo",
+    postLink: "article-link1"
+  }
+];
+
+
+/*
+=====================
+=====================
+Thumbs
+=====================
+=====================
+*/
+
+function loadux(){
+//Loop length:
+var postLength = post.length;
+//Empty container:
+$(".posts-box").empty();
+//Loop:
+for (i=0; i<postLength; i++) {
+  //Create thumb structure:
+  var listItem =
+    '<li>'+
+      '<div class="card">'+
+        '<a class="button" href="'+post[i].postLink+'" data-obj="'+i+'">'+
+          '<img src="'+post[i].postThumb+'" alt="">'+
+        '</a>'+
+        '<div>'+
+          '<h3>'+post[i].postTitle+'</h3>'+
+          '<p>'+post[i].postAbstract+'</p>'+
+        '</div>'+
+        '<div>'+
+          '<a class="button" href="'+post[i].postLink+'" data-obj="'+i+'">detail</a>'+  
+        '</div>'+
+      '</div>'+
+    '</li>';
+  //Append thumb:
+  $(".posts-box").append(listItem);
+};
+
+}
+
+  function loadData() {
+    axios.get("https://48wvsf3lc1.execute-api.ap-northeast-2.amazonaws.com/dev/v1/video/all")
+      .then(function (res) {
+        console.log(res);
+        const arrItems = []
+        for (var i = 0; i < res.data.result.Items.length; ++i) {
+          var n = res.data.result.Items[i];
+          var item = {
+            postTitle: n.title,
+            postAbstract: n.created_by,
+            postContent: JSON.stringify(n.mediainfo),
+            postThumb: "https://drive.google.com/uc?id=1XlEn94sZcbvOmeP3Ws5tWrrB3d8Qygc7",
+            postImg: "https://drive.google.com/uc?id=12RhLJZygX4IJfcc5nFH_eJ4H2x_XuIuo",
+            postLink: "article-link1"
+          }
+          post.push(item)
+          console.log(i)
+        }
+        console.log('@@@@@')
+        loadux()
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+loadData();
+/*
+=====================
+=====================
+Inner post
+=====================
+=====================
+*/
+var thisElement = 0;
+
+function innerContent(content){
+  $(".inner-img").attr("src",post[content].postImg);
+  $(".inner-title").html(post[content].postTitle);
+  $(".inner-text").html(post[content].postContent);
+};
+
+//Open post:
+$(".button").click(function(e){
+  e.preventDefault();
+  thisElement = $(this).attr("data-obj");
+  innerContent(thisElement);
+  $(".modal").css({"display":"block"});
+  dissBtn();
+});
+
+//Close post:
+$(".close-post, .modal-sandbox").click(function(){
+  $(".modal").css({"display":"none"});
+});
+
+//Next post:
+$(".next-post").click(function(e){
+  e.preventDefault();
+  if (thisElement<postLength-1) {
+    thisElement = parseInt(thisElement) + 1;
+    innerContent(thisElement);
+    dissBtn();
+  };
+});
+
+//Prev post:
+$(".prev-post").click(function(e){
+  e.preventDefault();
+  if (thisElement>0) {
+    thisElement = parseInt(thisElement) - 1;
+    innerContent(thisElement);
+    dissBtn();
+  };
+});
+
+//Button disable:
+function dissBtn(){
+  $(".prev-post, .next-post").removeClass("disabled");
+  if (thisElement<=0){
+    $(".prev-post").addClass("disabled");
+  }
+  else if (thisElement>=postLength-1){
+    $(".next-post").addClass("disabled");
+  };
+};
+
+</script>
+
+
+
+
+<style>
+    /* Global */
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+/*
+body {
+  font-family: 'Open Sans', sans-serif;
+  background: #FFCC80;
+  color: #444444;
+}
+*/
+/* Cards */
+.posts-box {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 40px 10px;
+  text-align: center;
+  list-style: none;
+}
+
+.posts-box li {
+  display: inline-block;
+  width: 320px;
+  max-width: 100%;
+  padding: 10px;
+  vertical-align: top;
+}
+
+.card {
+  text-align: left;
+  border-radius: 2px;
+  background: #FFFFFF;
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.10),
+    0 1px 2px rgba(0,0,0,0.22);
+}
+
+.card img {
+  display: block;
+  width: 100%;
+}
+
+.card div {
+  padding: 16px 20px;
+  border-bottom: 1px solid #EEEEEE;
+}
+
+.card div h3 {
+  margin: 8px 0;
+  font-size: .9em;
+}
+
+.card div p {
+  margin: 8px 0;
+  font-size: .9em;
+}
+
+.button {
+  color: #FFC107;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-size: .8em;
+}
+
+.button:hover {
+  opacity: .7;
+}
+
+/* Page */
+.modal,
+.modal-box {
+  z-index: 900;
+}
+
+.modal-sandbox {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: transparent;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: #FFB74D;
+  overflow: auto;
+}
+
+.modal-box {
+  position: relative;
+  width: 80%;
+  max-width: 920px;
+  margin: 100px auto;
+  background: #FFFFFF;
+  animation-name: modalbox;
+  animation-duration: .3s;
+  animation-timing-function: ease-out;
+}
+
+.modal-header img {
+  width: 100%;
+}
+
+.modal-body {
+  padding: 60px 8%;
+}
+
+.modal-body h2 {
+  margin-bottom: 30px;
+  letter-spacing: .06em;
+}
+
+.modal-body p {
+  font-size: .9em;
+  line-height: 1.5em;
+}
+
+@-webkit-keyframes modalbox {
+  0% {
+    top: -250px;
+    opacity: 0;
+  }
+  100% {
+    top: 0;
+    opacity: 1;
+  }
+}
+
+@keyframes modalbox {
+  0% {
+    top: -250px;
+    opacity: 0;
+  }
+  100% {
+    top: 0;
+    opacity: 1;
+  }
+}
+
+button {
+  min-width: 120px;
+  top: 50%;
+  left: 50%;
+  padding: 16px 32px;
+  margin: 24px 8px 0 0;
+  background: transparent;
+  text-decoration: none;
+  border: 1px solid #FFC107;
+  outline: none;
+  color: #FFC107;
+  cursor: pointer;
+}
+
+.disabled {
+  opacity: .4;
+  cursor: auto;
+}
+
+@media (max-width: 620px) {
+  button {
+    width: 100%;
+    min-width: auto;
+  }
+}
+
+</style>

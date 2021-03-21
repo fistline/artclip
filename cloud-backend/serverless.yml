@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: cloud-backend
+service: cloud-backend1
 # app and org for use with dashboard.serverless.com
 #app: your-app-name
 #org: your-org-name
@@ -88,7 +88,7 @@ resources:
     LambdaAPIRole:
       Type: "AWS::IAM::Role"
       Properties:
-        RoleName: artclip-lambdaAPIRole
+        RoleName: artclip-lambdaAPIRole1
         AssumeRolePolicyDocument:
           Version: "2012-10-17"
           Statement:
@@ -102,7 +102,7 @@ resources:
         Path: "/"
         Policies:
           -
-            PolicyName: artclip-lambdaAPIPolicy
+            PolicyName: artclip-lambdaAPIPolicy1
             PolicyDocument:
               Version: "2012-10-17"
               Statement:
@@ -258,7 +258,7 @@ resources:
 #    - exclude-me.js
 #    - exclude-me-dir/**
 custom:
-  environment: dev
+  environment: hackton
   prune:
     automatic: true
     number: 3
@@ -300,17 +300,31 @@ functions:
     # role: artclip-lambdaJobRole
     role: LambdaJobRole1
 
-  list_all:
+  get:
     runtime: nodejs12.x
-    handler: src/node/list.all
+    handler: src/node/get.get
     events:
       - http:
-          path: ${self:custom.base}/video/upload/
+          path: ${self:custom.base}/video/get/{id}
           method: get
           cors:
             origin: '*'
             headers: ${self:custom.allow-headers}
             allowCredentials: false
+    role: LambdaJobRole1
+
+  list_all:
+    runtime: nodejs12.x
+    handler: src/node/list.all
+    events:
+      - http:
+          path: ${self:custom.base}/video/all/
+          method: get
+          cors:
+            origin: '*'
+            headers: ${self:custom.allow-headers}
+            allowCredentials: false
+    role: LambdaJobRole1
     
 
   
