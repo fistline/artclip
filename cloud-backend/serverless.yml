@@ -325,8 +325,20 @@ functions:
             headers: ${self:custom.allow-headers}
             allowCredentials: false
     role: LambdaJobRole1
-    
 
+  nft_mint:
+    runtime: nodejs12.x
+    handler: src/node/mint.mint
+    events:
+      - http:
+          path: ${self:custom.base}/nft/mint/{contentid}/{seq}/{owner}
+          method: get
+          cors:
+            origin: '*'
+            headers: ${self:custom.allow-headers}
+            allowCredentials: false
+    role: LambdaJobRole1
+    
   
     
     
