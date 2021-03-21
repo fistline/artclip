@@ -12,9 +12,8 @@ https://docs.google.com/presentation/d/1ZG_-x_3LMR5IajMgb7YACjAParvEAbjfLrve0fBd
 ### https://github.com/fistline/artclip
 
 # cloud-backend
-video upload
-video segmentation
-video capture
+video upload(input bucket) => trigger work ==> video segmentation work(log dynamodb) ==> thumbnail capture ==> outbucket(log dynamodb)
+
 # aws infra
 s3, lambda, apigateway, mediaconvert, dynamodb, cloudfront
 
