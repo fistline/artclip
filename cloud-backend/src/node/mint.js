@@ -12,42 +12,47 @@ const iArtclip = require('./Artclip.json')
 
 const web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/v3/7383bec6645148db976b44a357797d3e"))
 
-module.exports.mint = async (event, context) => {
 
-
-    //   console.log('event.body::',event.body)
-    //   const params = JSON.parse(event.body);
-    //   console.log(params)
-
-    const contentid = event.pathParameters.contentid;
-    const seq = event.pathParameters.seq;
-    const owner = event.pathParameters.owner;
-
-    web3.eth.getTransactionCount(
-      '0x7853A600fcDF07a957Dd8f891677ea5dc4e908D1',
-    ).then(nonce=>{
-      _mintToken(contentid, seq, owner, nonce).then(r=>{
-        const response = {
+var response = {
           statusCode: 200,
           headers: {
             'Access-Control-Allow-Origin': '*'
           },
           body: JSON.stringify({
-            "result":r
+            "result":""
           }),
         };
+
+module.exports.mint = async (event, context) => {
+
+
+    const contentid = event.pathParameters.contentid;
+    const seq = event.pathParameters.seq;
+    const owner = event.pathParameters.owner;
+
+    const dbArtclip = new DbArtclip();
+    const item = await dbArtclip.get(contentid)
+    if(!item){
+      response.statusCode = 400;
+      response.body.result = JSON.stringify({"result":'not exist'})
+      return response
+    }
+
+    web3.eth.getTransactionCount(
+      '0x7853A600fcDF07a957Dd8f891677ea5dc4e908D1',
+    ).then(nonce=>{
+      _mintToken(contentid, seq, owner, nonce).then(txhash=>{
+        
+        // db저장
+        dbArtclip.mintUpdate(contentid, seq, owner, txhash)
+
+        response.body.result =JSON.stringify({  "result":txhash });
+        return response
       }).catch(e=>{
 
-        const response = {
-          statusCode: 400,
-          headers: {
-            'Access-Control-Allow-Origin': '*'
-          },
-          body: JSON.stringify({
-            "result":e
-          }),
-        };
-
+      response.statusCode = 400;
+      response.body.result = JSON.stringify({"result":e})
+      return response
       })
     });
 
@@ -88,7 +93,6 @@ async function _mintToken(contentid, seq, owner, nonce){
     } catch (e) {
       reject(e)
     }
-
   })
     
 

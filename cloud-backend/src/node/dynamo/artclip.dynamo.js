@@ -17,6 +17,29 @@ module.exports = class DbArtclip {
         return 'ACC/NAME#' + _account+'/'+ _title;
     }
 
+
+    get(contentid) {
+        return new Promise((resolve, reject) => {
+            
+            var params = {
+                TableName: this.table,
+                Key: {
+                    'pk':  contentid
+                }
+            }
+            // console.log("params:", params)
+            this.docClient.get(params, function (error, data) {
+                if (error) {
+                    // console.log(error)
+                    reject(error)
+                } else {
+                    resolve(data);
+                }
+            })
+        });
+    }
+
+
     put(_account, _title, _mediainfo, _path, _type) {
         const now = Date.now();
          const sk = this.SK_File(_account, _title)
@@ -123,6 +146,38 @@ module.exports = class DbArtclip {
                     resolve(data)
                 }
             })
+        });
+    }
+
+    mintUpdate(contentid, seq, owner, txhash) {
+
+        var params = {
+            TableName: this.table,
+            Key: {
+                pk: contentid
+            },
+            UpdateExpression: "set iscommit = :c, commit_at=:n, seq=:seq, owner=:owner, txhash=:txhash, updated_at=:n",
+            ExpressionAttributeValues: {
+                ":seq": seq,
+                ":owner": owner,
+                ":txhash": txhash,
+                ":n": Date.now()
+            },
+            ReturnValues: "UPDATED_NEW"
+        };
+
+        console.log('param:::', params)
+        return new Promise((resolve, reject) => {
+            this.docClient.update(params, function (error, data) {
+                if (error) {
+                    console.log(error)
+                    reject(error)
+
+                } else {
+                    console.log(data)
+                    resolve(data)
+                }
+            });
         });
     }
 
